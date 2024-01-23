@@ -10,4 +10,4 @@ request(url, (err, res, body) => {
     } else {
         console.log(JSON.parse(body).title);
     }
-    });
+});
