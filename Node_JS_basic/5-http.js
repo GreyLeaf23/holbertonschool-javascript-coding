@@ -2,26 +2,29 @@
 const http = require('http');
 const countStudents = require('./3-read_file_async');
 
-const DATABASE = 'database.csv';
+const hostname = '127.0.0.1';
+const port = 1245;
 
-const app = http.createServer((req, res) => {
-  res.setHeader('Content-Type', 'text/plain');
+const app = http.createServer(async (req, res) => {
+  res.statusCode = 200;
   if (req.url === '/') {
     res.end('Hello Holberton School!');
   } else if (req.url === '/students') {
-    countStudents(DATABASE)
-      .then((data) => {
-        res.end(`This is the list of our students\n${data}`);
+    let dbInfo = 'This is the list of our students\n';
+    await countStudents(process.argv[2])
+      .then((msg) => {
+        dbInfo += msg;
+        res.end(dbInfo);
       })
       .catch((err) => {
-        res.end(err.message);
+        dbInfo += err.message;
+        res.end(dbInfo);
       });
-  } else {
-    res.statusCode = 404;
-    res.end('Not found');
   }
 });
 
-app.listen(1245);
+app.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}`);
+});
 
 module.exports = app;
